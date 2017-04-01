@@ -1,0 +1,107 @@
+
+import os
+import time
+import sys
+import subprocess
+import re
+from threading import Timer
+
+def is_non_zero_file(fpath):  
+    return True if os.path.isfile(fpath) and os.path.getsize(fpath) > 0 else False
+
+def new_line(line):
+    #print(line)
+    cooldown = [int(s) for s in line.split() if s.isdigit()]
+    cooldown = int(cooldown.pop())
+    description = " ".join(re.findall("[a-zA-Z]+", line))
+    description = description[:].upper()
+    #print("\n@" + description)
+    #for i in range(cooldown,0,-1):
+    #    print '%d seconds\r' % i,
+    #    sys.stdout.flush()
+    #    time.sleep(1)
+    print(line)
+    clock(cooldown,description)
+
+
+def clock(cooldown,description):
+    t=Timer(cooldown,clock_output,args=(description,))
+    t.start()
+
+def clock_output(description):
+    print(description +" IS UP!")
+    t2s = '"' + description +' IS UP!' +'"'
+    subprocess.call('espeak '+t2s, shell=True)
+
+    
+def main():
+    while True:
+        print("----LEAGUE OF LEGENDS TIMER----".center(10))
+        print("Copyright (C) 2016 Steven Chan - All Rights Reserved")
+        print("\nInstructions".center(10))
+        print("This program uses the notes function built into the LoL client.")
+        print("While in game, type '/n' followed by anything you want. Example: /n @annie f 180")
+        print("The program will notify you when a cooldown is up.")
+
+        if is_non_zero_file('directory_file.txt'):
+            directory_file = open("directory_file.txt",'r')
+            note_directory=str(directory_file.read())
+            directory_file.close()
+        else:
+            print("\nYour default MyNotes.txt directory is: ")
+            sample_directory= "C:\Riot Games\League of Legends\RADS\solutions\lol_game_client_sln" + "\\" + "releases\\" + "0.0.1.126"
+            print(sample_directory)
+            print("If you do not see a MyNotes.txt file it is because you haven't used the note command before. Hop into a game and use the command to create the file.")
+            directory_file = open("directory_file.txt",'w')
+            note_directory=""
+            while True:
+                #note_directory = raw_input("\nEnter MyNotes.txt directory: ")
+                note_directory = input("\nEnter MyNotes.txt directory: ")
+                if not note_directory:
+                    print("[ERROR] Enter a directory location!")
+                    continue
+                else:
+                    directory_file.writelines(note_directory)
+                    directory_file.close()
+                    break
+        print("\nThe program is using " + note_directory + " as MyNotes.txt directory.")
+        print("If at any time you would like to change MyNotes.txt directory, edit the directory_file.txt file.")
+
+        #my_notes = open(note_directory + '\MyNotes.txt', 'r')
+        try:
+            my_notes = open(note_directory + '\MyNotes.txt','r')
+        except:
+            print("[ERROR] No such file or directory. Please make sure your directory is correct and run the program again.")
+            exit()
+        open(note_directory + '\MyNotes.txt', 'w').close()
+
+        print("")
+        print("c2 e5 8a 93 fe 43 bf cb ae 67")
+        print("bb 98 ad fa 95 dd be 3f 8b 05")
+        print("03 7c d4 e7 fb 3b 2d 6c 0f f9")
+        print("9f e6 06 0a f0 c4 f4 4a a1 64")
+        print("20 a7 f5 0d c5 a6 48 07 38 dc")
+        print("")
+        print("At the beginning of each game, type '/n reset' to reset the program.")
+        print("The program is now running. It will display notes you enter as well as a notification and a tts voice.")
+        print("")
+        while True:
+
+            line = my_notes.readline()
+            if not line:
+                time.sleep(1)
+                
+            else:
+                if line.startswith("@"):
+                    new_line(line)
+                if line.startswith("reset"):
+                    print("COMMAND: RESET")
+                    print("COMMAND: RESET")
+                    print("COMMAND: RESET")
+                    break
+
+main()
+
+
+
+
